@@ -2,11 +2,13 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 import chalk from 'chalk';
 import ora from 'ora';
 import prompt from 'prompt-sync';
-
+import { config  } from "dotenv";
+config();
 const promptSync = prompt();
+const apiKey = process.env.API_KEY;
 
 const MODEL_NAME = "gemini-1.0-pro";
-const API_KEY = "API KEY";
+const API_KEY = apiKey;
 const GENERATION_CONFIG = {
     temperature: 0.9,
     topK: 1,
@@ -34,20 +36,26 @@ async function runChat() {
 
         spinner.stop();
 
-        while (true) {
+        let isRunning = true;
+
+        while (isRunning) {
             const userInput = promptSync(chalk.green('You: '));
             if (userInput.toLowerCase() === 'exit') {
                 console.log(chalk.yellow('Goodbye!'));
-                process.exit(0);
+                isRunning = false;
+            } else {
+                const result = await chat.sendMessage(userInput);
+                if (result.error) {
+                    console.error(chalk.red('AI Error:'), result.error.message);
+                    continue;
+                }
+                const response = result.response.text();
+                console.log(chalk.blue('AI:'), response);
             }
-            const result = await chat.sendMessage(userInput);
-            if (result.error) {
-                console.error(chalk.red('AI Error:'), result.error.message);
-                continue;
-            }
-            const response = result.response.text();
-            console.log(chalk.blue('AI:'), response);
         }
+        
+        process.exit(0);
+        
     } catch (error) {
         spinner.stop();
         console.error(chalk.red('An error occurred:'), error.message);
