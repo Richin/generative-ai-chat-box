@@ -38,7 +38,7 @@ Commit your Changes (git commit -m 'Add some AmazingFeature')
 Push to the Branch (git push origin feature/AmazingFeature)
 Open a Pull Request
 License
-Distributed under the MIT License. See LICENSE for more information.
+Distributed under the Apache-2.0 license. See LICENSE for more information.
 
 Project Link: https://github.com/Richin/generative-ai-chat-box.git
 
